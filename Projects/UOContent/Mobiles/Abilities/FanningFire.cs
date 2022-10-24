@@ -8,30 +8,8 @@ public class FanningFire : MonsterAbilitySingleTargetDoT
 
     public const string Name = "FanningFire";
 
-    protected override void OnTick(BaseCreature source, Mobile target)
+    protected override void StartEffect(BaseCreature source, Mobile defender)
     {
-        RemoveEffect(target);
-        // The creature surrounds you with fire, reducing your resistance to fire attacks.
-        target.SendLocalizedMessage(1070835);
-    }
-
-    protected override void OnEffectRemoved(Mobile defender)
-    {
-        defender.RemoveResistanceMod(Name);
-    }
-
-    protected override void OnEffectAdded(BaseCreature source, Mobile defender)
-    {
-        if (RemoveEffect(defender))
-        {
-            defender.SendLocalizedMessage(1070845); // The creature continues to corrupt your armor!
-        }
-        else
-        {
-            // The creature fans you with fire, reducing your resistance to fire attacks.
-            defender.SendLocalizedMessage(1070833);
-        }
-
         /**
          * Fanning Fire
          * Start cliloc: 1070833
@@ -60,6 +38,11 @@ public class FanningFire : MonsterAbilitySingleTargetDoT
          * - Unknown: "0x0"
          */
 
+        RemoveEffect(defender);
+
+        // The creature fans you with fire, reducing your resistance to fire attacks.
+        defender.SendLocalizedMessage(1070833);
+
         var effect = -(defender.FireResistance / 10);
 
         var mod = new ResistanceMod(ResistanceType.Fire, Name, effect);
@@ -70,5 +53,16 @@ public class FanningFire : MonsterAbilitySingleTargetDoT
 
         // TODO: Trigger replaces a normal attack.
         AOS.Damage(defender, source, Utility.RandomMinMax(35, 45), 0, 100, 0, 0, 0);
+    }
+
+    protected override void EndEffect(Mobile defender)
+    {
+        defender.RemoveResistanceMod(Name);
+    }
+
+    protected override void OnEffectExpired(Mobile defender)
+    {
+        // Your resistance to fire attacks has returned.
+        defender.SendLocalizedMessage(1070834);
     }
 }

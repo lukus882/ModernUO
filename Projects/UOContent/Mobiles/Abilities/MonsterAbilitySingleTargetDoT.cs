@@ -13,27 +13,26 @@ public abstract class MonsterAbilitySingleTargetDoT : MonsterAbilitySingleTarget
     protected override void OnTarget(MonsterAbilityTrigger trigger, BaseCreature source, Mobile defender)
     {
         _table ??= new Dictionary<Mobile, ExpireTimer>();
-        _table.Remove(defender);
-
-        OnEffectAdded(source, defender);
 
         var duration = Utility.RandomMinMax(MinDelay, MaxDelay);
         var timer = _table[defender] = new ExpireTimer(this, source, defender, duration);
         timer.Start();
+
+        StartEffect(source, defender);
     }
 
-    protected abstract void OnEffectAdded(BaseCreature source, Mobile defender);
+    protected abstract void StartEffect(BaseCreature source, Mobile defender);
+    protected abstract void EndEffect(Mobile defender);
+    protected abstract void OnEffectExpired(Mobile defender);
 
-    protected abstract void OnEffectRemoved(Mobile defender);
+    public bool IsUnderEffect(Mobile defender) => _table.ContainsKey(defender);
 
-    protected abstract void OnTick(BaseCreature source, Mobile defender);
-
-    public bool RemoveEffect(Mobile defender)
+    protected bool RemoveEffect(Mobile defender)
     {
         if (_table.Remove(defender, out var timer))
         {
             timer.Stop();
-            OnEffectRemoved(defender);
+            EndEffect(defender);
             return true;
         }
 
@@ -58,6 +57,10 @@ public abstract class MonsterAbilitySingleTargetDoT : MonsterAbilitySingleTarget
             _defender = defender;
         }
 
-        protected void OnTick() => _ability.OnTick(_source, _defender);
+        protected override void OnTick()
+        {
+            _ability.RemoveEffect(_defender);
+            _ability.OnEffectExpired(_defender);
+        }
     }
 }

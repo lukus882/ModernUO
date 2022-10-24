@@ -8,18 +8,7 @@ public class GraspingClaw : MonsterAbilitySingleTargetDoT
 
     private const string Name = "GraspingClaw";
 
-    protected override void OnTick(BaseCreature source, Mobile defender)
-    {
-        RemoveEffect(defender);
-        defender.SendLocalizedMessage(1070838); // Your resistance to physical attacks has returned.
-    }
-
-    protected override void OnEffectRemoved(Mobile defender)
-    {
-        defender.RemoveResistanceMod(Name);
-    }
-
-    protected override void OnEffectAdded(BaseCreature source, Mobile defender)
+    protected override void StartEffect(BaseCreature source, Mobile defender)
     {
         if (RemoveEffect(defender))
         {
@@ -54,5 +43,15 @@ public class GraspingClaw : MonsterAbilitySingleTargetDoT
         defender.AddResistanceMod(mod);
 
         defender.FixedEffect(0x37B9, 10, 5);
+    }
+
+    protected override void EndEffect(Mobile defender)
+    {
+        defender.RemoveResistanceMod(Name);
+    }
+
+    protected override void OnEffectExpired(Mobile defender)
+    {
+        defender.SendLocalizedMessage(1070838); // Your resistance to physical attacks has returned.
     }
 }

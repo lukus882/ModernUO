@@ -8,18 +8,7 @@ public class RuneCorruption : MonsterAbilitySingleTargetDoT
 
     private const string Name = "RuneCorruption";
 
-    protected override void OnEffectRemoved(Mobile defender)
-    {
-        defender.RemoveResistanceMod(Name);
-    }
-
-    protected override void OnTick(BaseCreature source, Mobile defender)
-    {
-        RemoveEffect(defender);
-        defender.SendLocalizedMessage(1071967); // The corruption of your armor has worn off
-    }
-
-    protected override void OnEffectAdded(BaseCreature source, Mobile defender)
+    protected override void StartEffect(BaseCreature source, Mobile defender)
     {
         if (RemoveEffect(defender))
         {
@@ -153,5 +142,16 @@ public class RuneCorruption : MonsterAbilitySingleTargetDoT
         }
 
         defender.FixedEffect(0x37B9, 10, 5);
+    }
+
+    protected override void EndEffect(Mobile defender)
+    {
+        defender.RemoveResistanceMod(Name);
+    }
+
+    protected override void OnEffectExpired(Mobile defender)
+    {
+
+        defender.SendLocalizedMessage(1071967); // The corruption of your armor has worn off
     }
 }
