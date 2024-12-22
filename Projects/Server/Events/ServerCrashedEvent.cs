@@ -29,6 +29,8 @@ public class ServerCrashedEventArgs
 
 public static partial class EventSink
 {
+    public static Action<Mobile> PlayerDeath { get; set; }
+
     public static event Action<ServerCrashedEventArgs> ServerCrashed;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
