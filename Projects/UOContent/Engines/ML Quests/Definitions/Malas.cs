@@ -49,7 +49,7 @@ public partial class Drithen : BaseCreature
         SetSkill(SkillName.Focus, 60.0, 80.0);
     }
 
-    public override bool IsInvulnerable => true;
+    public override bool IsInvulnerable => false;
     public override bool CanTeach => true;
     public override string DefaultName => "Drithen";
     public override bool CanShout => true;
